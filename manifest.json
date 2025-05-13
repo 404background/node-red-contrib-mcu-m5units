@@ -1,0 +1,6 @@
+{
+    "modules": {
+        "mcu_joystick": "./node/joystick/mcu_joystick"
+    },
+    "preload": "mcu_joystick"
+}

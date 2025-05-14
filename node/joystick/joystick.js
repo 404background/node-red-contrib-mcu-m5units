@@ -20,7 +20,15 @@ module.exports = function(RED) {
                 if (msg && msg._status) {
                     // Error state
                     if (msg._status.error) {
-                        node.status({fill:"red", shape:"dot", text: msg._status.error});
+                        // Show more descriptive error status
+                        const errorText = msg._status.error.includes("read failed") ? 
+                            "I2C read error" : msg._status.error;
+                        node.status({fill:"red", shape:"dot", text: errorText});
+                        
+                        // Auto-recovery after some time
+                        setTimeout(() => {
+                            node.status({fill:"yellow", shape:"ring", text:"retrying..."});
+                        }, 2000);
                     } 
                     // Initialization complete
                     else if (msg._status.initialized) {

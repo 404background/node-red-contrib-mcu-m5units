@@ -4,6 +4,8 @@
         color: '#a6bbcf',
         defaults: {
             name: {value: ""},
+            sdaPin: {value: 21, required: true, validate: RED.validators.number()},
+            sclPin: {value: 22, required: true, validate: RED.validators.number()},
             moddable_manifest: {
                 value: {
                     include: [
@@ -34,5 +36,15 @@
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="mcu_joystick.name"></span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]mcu_joystick.name-placeholder">
+    </div>
+    
+    <div class="form-row">
+        <label for="node-input-sdaPin"><i class="fa fa-microchip"></i> SDA Pin</label>
+        <input type="number" id="node-input-sdaPin" min="0" max="40">
+    </div>
+    
+    <div class="form-row">
+        <label for="node-input-sclPin"><i class="fa fa-microchip"></i> SCL Pin</label>
+        <input type="number" id="node-input-sclPin" min="0" max="40">
     </div>
 </script>

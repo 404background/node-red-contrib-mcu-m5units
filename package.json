@@ -1,0 +1,35 @@
+{
+  "name": "node-red-contrib-mcu-m5units",
+  "version": "0.0.1",
+  "description": "Node-RED nodes to use M5Stack Units with Node-RED MCU",
+  "main": "node/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/404background/node-red-contrib-mcu-m5units"
+  },
+  "keywords": [
+    "node-red",
+    "m5stack",
+    "mcu",
+    "joystick",
+    "i2c"
+  ],
+  "author": "404background",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/404background/node-red-contrib-mcu-m5units/issues"
+  },
+  "homepage": "https://github.com/404background/node-red-contrib-mcu-m5units#readme",
+  "node-red": {
+    "version": ">=3.0.0",
+    "nodes": {
+      "mcu_joystick": "node/joystick/joystick.js"
+    }
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

@@ -1,9 +1,9 @@
 <script type="text/javascript" data-help-style="node-red-node-description">
     RED.nodes.registerType('mcu_joystick', {
         category: 'M5Stack Units',
-        color: '#a6bbcf',        defaults: {
+        color: '#a6bbcf',
+        defaults: {
             name: {value: ""},
-            interval: {value: 100, required: true, validate: RED.validators.number()},
             moddable_manifest: {
                 value: {
                     include: [
@@ -14,8 +14,8 @@
                 }
             }
         },
-        inputs: 0,
-        outputs: 3,  // X, Y, and Button outputs
+        inputs: 1,
+        outputs: 3,
         outputLabels: ["X Axis", "Y Axis", "Button"],
         icon: "font-awesome/fa-gamepad",
         label: function() {
@@ -30,11 +30,9 @@
     });
 </script>
 
-<script type="text/html" data-template-name="mcu_joystick">    <div class="form-row">
+<script type="text/html" data-template-name="mcu_joystick">
+    <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="mcu_joystick.name"></span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]mcu_joystick.name-placeholder">
-    </div><div class="form-row">
-        <label for="node-input-interval"><i class="fa fa-clock-o"></i> <span data-i18n="mcu_joystick.interval"></span></label>
-        <input type="number" id="node-input-interval" min="10" max="60000" value="100">
     </div>
 </script>

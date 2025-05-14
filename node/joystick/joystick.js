@@ -5,13 +5,18 @@ module.exports = function(RED) {
         
         const node = this;
         this.interval = parseInt(config.interval || 100, 10);
-          // Processing in Node-RED MCU environment
+        
+        // Processing in Node-RED MCU environment
         if (RED.device) {
             // Display initialization status
             node.status({fill:"blue", shape:"dot", text:"initializing..."});
             
             // Simple display of status information from MCU
             node.on("input", function(msg) {
+                // Forward received messages to the device to trigger reading
+                // This allows manual polling of the joystick
+                
+                // Handle special status messages
                 if (msg && msg._status) {
                     // Error state
                     if (msg._status.error) {
@@ -20,7 +25,8 @@ module.exports = function(RED) {
                     // Initialization complete
                     else if (msg._status.initialized) {
                         node.status({fill:"green", shape:"dot", text:"ready"});
-                    }                    // Joystick values
+                    }
+                    // Joystick values
                     else if (msg._status.x !== undefined) {
                         // Display raw X/Y values (0-255)
                         const x = msg._status.x;

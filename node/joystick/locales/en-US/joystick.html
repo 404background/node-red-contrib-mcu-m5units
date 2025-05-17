@@ -1,0 +1,30 @@
+<script type="text/html" data-help-name="mcu_joystick">
+    <p>A node that reads values from M5Stack Joystick Unit via I2C.</p>
+    
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>Output 1 - X Axis</dt>
+        <dd>
+            <dl class="message-properties">
+                <dt>payload <span class="property-type">number</span></dt>
+                <dd>X axis value from 0 to 255</dd>
+            </dl>
+        </dd>
+        
+        <dt>Output 2 - Y Axis</dt>
+        <dd>
+            <dl class="message-properties">
+                <dt>payload <span class="property-type">number</span></dt>
+                <dd>Y axis value from 0 to 255</dd>
+            </dl>
+        </dd>
+        
+        <dt>Output 3 - Button</dt>
+        <dd>
+            <dl class="message-properties">
+                <dt>payload <span class="property-type">number</span></dt>
+                <dd>Button state (1 when pressed, 0 when released)</dd>
+            </dl>
+        </dd>
+    </dl>
+</script>

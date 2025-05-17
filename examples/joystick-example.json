@@ -1,0 +1,115 @@
+[
+    {
+        "id": "c90d91941b596586",
+        "type": "debug",
+        "z": "cb5954c42a51cd53",
+        "name": "X",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "_mcu": {
+            "mcu": true
+        },
+        "x": 630,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "9a44bad569fd397b",
+        "type": "debug",
+        "z": "cb5954c42a51cd53",
+        "name": "Y",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "_mcu": {
+            "mcu": true
+        },
+        "x": 630,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "cd0c0caa0b1a2869",
+        "type": "debug",
+        "z": "cb5954c42a51cd53",
+        "name": "Button",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "_mcu": {
+            "mcu": true
+        },
+        "x": 630,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "4e3d8d64fc06a1ae",
+        "type": "mcu_joystick",
+        "z": "cb5954c42a51cd53",
+        "name": "",
+        "sdaPin": "21",
+        "sclPin": "22",
+        "moddable_manifest": {
+            "include": [
+                {
+                    "git": "https://github.com/404background/node-red-contrib-mcu-m5units.git"
+                }
+            ]
+        },
+        "_mcu": {
+            "mcu": true
+        },
+        "x": 480,
+        "y": 360,
+        "wires": [
+            [
+                "c90d91941b596586"
+            ],
+            [
+                "9a44bad569fd397b"
+            ],
+            [
+                "cd0c0caa0b1a2869"
+            ]
+        ]
+    },
+    {
+        "id": "22a0aeb2de5216b2",
+        "type": "inject",
+        "z": "cb5954c42a51cd53",
+        "name": "",
+        "props": [],
+        "repeat": "1",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "_mcu": {
+            "mcu": true
+        },
+        "x": 330,
+        "y": 360,
+        "wires": [
+            [
+                "4e3d8d64fc06a1ae"
+            ]
+        ]
+    }
+]

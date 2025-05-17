@@ -1,0 +1,30 @@
+<script type="text/html" data-help-name="mcu_joystick">
+    <p>I2C経由でM5Stack Joystick Unitから値を読み取るノード。</p>
+    
+    <h3>出力</h3>
+    <dl class="message-properties">
+        <dt>出力1 - X軸</dt>
+        <dd>
+            <dl class="message-properties">
+                <dt>payload <span class="property-type">number</span></dt>
+                <dd>0から255までのX軸値</dd>
+            </dl>
+        </dd>
+        
+        <dt>出力2 - Y軸</dt>
+        <dd>
+            <dl class="message-properties">
+                <dt>payload <span class="property-type">number</span></dt>
+                <dd>0から255までのY軸値</dd>
+            </dl>
+        </dd>
+        
+        <dt>出力3 - ボタン</dt>
+        <dd>
+            <dl class="message-properties">
+                <dt>payload <span class="property-type">number</span></dt>
+                <dd>ボタンの状態（押されている時は1、押されていない時は0）</dd>
+            </dl>
+        </dd>
+    </dl>
+</script>

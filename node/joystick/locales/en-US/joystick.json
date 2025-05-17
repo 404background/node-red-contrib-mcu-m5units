@@ -1,0 +1,9 @@
+{
+    "mcu_joystick": {
+        "palette-label": "Joystick",
+        "name": "Name",
+        "name-placeholder": "Name",
+        "sda-pin": "SDA Pin",
+        "scl-pin": "SCL Pin"
+    }
+}

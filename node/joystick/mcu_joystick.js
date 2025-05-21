@@ -7,6 +7,7 @@ let i2cCache = null;
 class JoystickNode extends Node {
     #i2c = null;
     #i2cInstance = null;
+    #buffer = new Uint8Array(3);
     
     onStart(config) {
         super.onStart(config);
@@ -49,8 +50,7 @@ class JoystickNode extends Node {
             this.status({fill: "red", shape: "dot", text: "read error"});
             this.send([{ payload: null }, null, null]);
         }
-        
-        if (done) done();
+          done?.();
     }
     
     #readJoystick() {
@@ -59,20 +59,17 @@ class JoystickNode extends Node {
         try {
             if (!this.#i2cInstance) {
                 const i2cOptions = {
-                    data: Number(this.#i2c.data) || 21,
-                    clock: Number(this.#i2c.clock) || 22,
+                    data: Number(this.#i2c.data) ?? 21,
+                    clock: Number(this.#i2c.clock) ?? 22,
                     address: JOYSTICK_I2C_ADDRESS,
                     hz: 100000
                 };
                 this.#i2cInstance = new this.#i2c.io(i2cOptions);
             }
             
-            const buffer = new Uint8Array(3);
-            this.#i2cInstance.read(buffer.buffer);
+            this.#i2cInstance.read(this.#buffer);
             
-            const x = buffer[0];
-            const y = buffer[1]; 
-            const buttonPressed = buffer[2];
+            const [x, y, buttonPressed] = this.#buffer;
             this.status({fill: "green", shape: "dot", text: `x:${x}, y:${y}, btn:${buttonPressed ? 'pressed' : 'released'}`});
             
             this.send([
@@ -81,10 +78,11 @@ class JoystickNode extends Node {
                 { payload: buttonPressed }
             ]);
         } catch (e) {
-            if (this.#i2cInstance && typeof this.#i2cInstance.close === "function") {
+            if (this.#i2cInstance) {
                 try {
                     this.#i2cInstance.close();
                 } catch (err) {
+                    // Handle any potential errors during close
                 }
             }
             this.#i2cInstance = null;
@@ -95,7 +93,7 @@ class JoystickNode extends Node {
     }
     
     onStop() {
-        if (this.#i2cInstance && typeof this.#i2cInstance.close === "function") {
+        if (this.#i2cInstance) {
             this.#i2cInstance.close();
         }
         this.#i2cInstance = null;

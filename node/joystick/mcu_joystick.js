@@ -1,13 +1,12 @@
 import { Node } from "nodered"
 
 const JOYSTICK_I2C_ADDRESS = 0x52;
-const BUTTON_PRESSED = 1;
 let i2cCache = null;
 
 class JoystickNode extends Node {
+    #buffer = new Uint8Array(3);
     #i2c = null;
     #i2cInstance = null;
-    #buffer = new Uint8Array(3);
     
     onStart(config) {
         super.onStart(config);

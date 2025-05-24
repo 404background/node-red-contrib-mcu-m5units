@@ -1,10 +1,11 @@
 import { Node } from "nodered"
 
 const JOYSTICK_I2C_ADDRESS = 0x52;
-const BUTTON_PRESSED = 1;
 let i2cCache = null;
 
 class JoystickNode extends Node {
+    #buffer = new Uint8Array(3);
+    #probeBuffer = new ArrayBuffer(0);
     #i2c = null;
     #i2cInstance = null;
     
@@ -49,8 +50,7 @@ class JoystickNode extends Node {
             this.status({fill: "red", shape: "dot", text: "read error"});
             this.send([{ payload: null }, null, null]);
         }
-        
-        if (done) done();
+          done?.();
     }
     
     #readJoystick() {
@@ -59,20 +59,23 @@ class JoystickNode extends Node {
         try {
             if (!this.#i2cInstance) {
                 const i2cOptions = {
-                    data: Number(this.#i2c.data) || 21,
-                    clock: Number(this.#i2c.clock) || 22,
+                    data: Number(this.#i2c.data) ?? 21,
+                    clock: Number(this.#i2c.clock) ?? 22,
                     address: JOYSTICK_I2C_ADDRESS,
                     hz: 100000
                 };
                 this.#i2cInstance = new this.#i2c.io(i2cOptions);
             }
             
-            const buffer = new Uint8Array(3);
-            this.#i2cInstance.read(buffer.buffer);
+            if (this.#i2cInstance.write(this.#probeBuffer)) {
+                this.status({fill: "red", shape: "dot", text: "device disconnected"});
+                this.send([{ payload: null }, null, null]);
+                return;
+            }
             
-            const x = buffer[0];
-            const y = buffer[1]; 
-            const buttonPressed = buffer[2];
+            this.#i2cInstance.read(this.#buffer);
+            
+            const [x, y, buttonPressed] = this.#buffer;
             this.status({fill: "green", shape: "dot", text: `x:${x}, y:${y}, btn:${buttonPressed ? 'pressed' : 'released'}`});
             
             this.send([
@@ -81,23 +84,15 @@ class JoystickNode extends Node {
                 { payload: buttonPressed }
             ]);
         } catch (e) {
-            if (this.#i2cInstance && typeof this.#i2cInstance.close === "function") {
-                try {
-                    this.#i2cInstance.close();
-                } catch (err) {
-                }
-            }
+            this.#i2cInstance?.close();
             this.#i2cInstance = null;
             
             console.error(`Joystick read error: ${e.message}`);
             throw e;
         }
     }
-    
-    onStop() {
-        if (this.#i2cInstance && typeof this.#i2cInstance.close === "function") {
-            this.#i2cInstance.close();
-        }
+      onStop() {
+        this.#i2cInstance?.close();
         this.#i2cInstance = null;
     }
     

@@ -5,6 +5,7 @@ let i2cCache = null;
 
 class JoystickNode extends Node {
     #buffer = new Uint8Array(3);
+    #probeBuffer = new ArrayBuffer(0);
     #i2c = null;
     #i2cInstance = null;
     
@@ -66,6 +67,12 @@ class JoystickNode extends Node {
                 this.#i2cInstance = new this.#i2c.io(i2cOptions);
             }
             
+            if (this.#i2cInstance.write(this.#probeBuffer)) {
+                this.status({fill: "red", shape: "dot", text: "device disconnected"});
+                this.send([{ payload: null }, null, null]);
+                return;
+            }
+            
             this.#i2cInstance.read(this.#buffer);
             
             const [x, y, buttonPressed] = this.#buffer;
@@ -77,24 +84,15 @@ class JoystickNode extends Node {
                 { payload: buttonPressed }
             ]);
         } catch (e) {
-            if (this.#i2cInstance) {
-                try {
-                    this.#i2cInstance.close();
-                } catch (err) {
-                    // Handle any potential errors during close
-                }
-            }
+            this.#i2cInstance?.close();
             this.#i2cInstance = null;
             
             console.error(`Joystick read error: ${e.message}`);
             throw e;
         }
     }
-    
-    onStop() {
-        if (this.#i2cInstance) {
-            this.#i2cInstance.close();
-        }
+      onStop() {
+        this.#i2cInstance?.close();
         this.#i2cInstance = null;
     }
     

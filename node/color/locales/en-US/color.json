@@ -1,0 +1,19 @@
+{
+    "mcu_color": {
+        "palette-label": "Color",
+        "name": "Name",
+        "name-placeholder": "Name",
+        "sda-pin": "SDA Pin",
+        "scl-pin": "SCL Pin",
+        "output-mode": "Output Mode",
+        "raw-values": "Raw Values (0-65535)",
+        "rgb-values": "RGB Values (0-255)",
+        "calibration": "Calibration",
+        "black-reference": "Black Reference Values:",
+        "white-reference": "White Reference Values:",
+        "red": "Red",
+        "green": "Green",
+        "blue": "Blue",
+        "calibration-tip": "<b>Tip:</b> Place the sensor against a black surface and record the RGB values, then against a white surface and record those values. This enables proper color calibration for RGB mode."
+    }
+}

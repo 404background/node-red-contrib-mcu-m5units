@@ -1,0 +1,124 @@
+<script type="text/javascript" data-help-style="node-red-node-description">
+    RED.nodes.registerType('mcu_color', {
+        category: 'M5Stack Units',
+        color: '#ff6666',
+        defaults: {
+            name: {value: ""},
+            sdaPin: {value: 21, required: true},
+            sclPin: {value: 22, required: true},
+            outputMode: {value: "raw", required: true},
+            redBlack: {value: 0},
+            greenBlack: {value: 0},
+            blueBlack: {value: 0},
+            redWhite: {value: 65535},
+            greenWhite: {value: 65535},
+            blueWhite: {value: 65535},
+            moddable_manifest: {
+                value: {
+                    include: [
+                        {
+                            "git": "https://github.com/404background/node-red-contrib-mcu-m5units.git"
+                        }
+                    ]
+                }
+            }
+        },
+        inputs: 1,
+        outputs: 4,
+        outputLabels: function() {
+            return this.outputMode === "rgb" ? ["Red (0-255)", "Green (0-255)", "Blue (0-255)", "RGB String"] : ["Red", "Green", "Blue", "Clear"];
+        },
+        icon: "font-awesome/fa-paint-brush",
+        label: function() {
+            return this.name || "Color";
+        },
+        labelStyle: function() {
+            return this.name ? "node_label_italic" : "";
+        },        paletteLabel: function() {
+            return this._("mcu_color.palette-label");
+        },
+        oneditprepare: function() {
+            var node = this;
+            
+            function toggleCalibrationSection() {
+                var outputMode = $("#node-input-outputMode").val();
+                if (outputMode === "rgb") {
+                    $("#calibration-section").show();
+                } else {
+                    $("#calibration-section").hide();
+                }
+            }
+            
+            // Set initial state
+            toggleCalibrationSection();
+            
+            // Handle dropdown change
+            $("#node-input-outputMode").change(function() {
+                toggleCalibrationSection();
+            });
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="mcu_color">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="mcu_color.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]mcu_color.name-placeholder">
+    </div>
+    <div class="form-row">
+        <label for="node-input-sdaPin"><i class="fa fa-microchip"></i> <span data-i18n="mcu_color.sda-pin"></span></label>
+        <input type="number" id="node-input-sdaPin">
+    </div>
+    
+    <div class="form-row">
+        <label for="node-input-sclPin"><i class="fa fa-microchip"></i> <span data-i18n="mcu_color.scl-pin"></span></label>
+        <input type="number" id="node-input-sclPin">
+    </div>
+    
+    <div class="form-row">
+        <label for="node-input-outputMode"><i class="fa fa-cogs"></i> <span data-i18n="mcu_color.output-mode"></span></label>
+        <select id="node-input-outputMode" style="width:70%">
+            <option value="raw" data-i18n="mcu_color.raw-values"></option>
+            <option value="rgb" data-i18n="mcu_color.rgb-values"></option>
+        </select>
+    </div>
+    
+    <div id="calibration-section" style="display:none;">
+        <hr>
+        <div class="form-row">
+            <label style="font-weight: bold;"><i class="fa fa-adjust"></i> <span data-i18n="mcu_color.calibration"></span></label>
+        </div>        <div class="form-row">
+            <label><span data-i18n="mcu_color.black-reference"></span></label>
+        </div>
+        <div class="form-row" style="margin-left: 20px;">
+            <label for="node-input-redBlack" style="width:60px;"><span data-i18n="mcu_color.red"></span>:</label>
+            <input type="number" id="node-input-redBlack" style="width:120px;" min="0" max="65535">
+        </div>
+        <div class="form-row" style="margin-left: 20px;">
+            <label for="node-input-greenBlack" style="width:60px;"><span data-i18n="mcu_color.green"></span>:</label>
+            <input type="number" id="node-input-greenBlack" style="width:120px;" min="0" max="65535">
+        </div>
+        <div class="form-row" style="margin-left: 20px;">
+            <label for="node-input-blueBlack" style="width:60px;"><span data-i18n="mcu_color.blue"></span>:</label>
+            <input type="number" id="node-input-blueBlack" style="width:120px;" min="0" max="65535">
+        </div>
+        <div class="form-row">
+            <label><span data-i18n="mcu_color.white-reference"></span></label>
+        </div>
+        <div class="form-row" style="margin-left: 20px;">
+            <label for="node-input-redWhite" style="width:60px;"><span data-i18n="mcu_color.red"></span>:</label>
+            <input type="number" id="node-input-redWhite" style="width:120px;" min="0" max="65535">
+        </div>
+        <div class="form-row" style="margin-left: 20px;">
+            <label for="node-input-greenWhite" style="width:60px;"><span data-i18n="mcu_color.green"></span>:</label>
+            <input type="number" id="node-input-greenWhite" style="width:120px;" min="0" max="65535">
+        </div>
+        <div class="form-row" style="margin-left: 20px;">
+            <label for="node-input-blueWhite" style="width:60px;"><span data-i18n="mcu_color.blue"></span>:</label>
+            <input type="number" id="node-input-blueWhite" style="width:120px;" min="0" max="65535">
+        </div>
+        <div class="form-row">
+            <div class="form-tips" data-i18n="[html]mcu_color.calibration-tip"></div>
+        </div>
+    </div>
+</script>

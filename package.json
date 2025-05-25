@@ -15,6 +15,7 @@
     "m5stack",
     "mcu",
     "joystick",
+    "color",
     "i2c"
   ],
   "author": "background404",
@@ -26,7 +27,8 @@
   "node-red": {
     "version": ">=3.0.0",
     "nodes": {
-      "mcu_joystick": "node/joystick/joystick.js"
+      "mcu_joystick": "node/joystick/joystick.js",
+      "mcu_color": "node/color/color.js"
     }
   },
   "engines": {

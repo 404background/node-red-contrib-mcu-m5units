@@ -1,0 +1,19 @@
+{
+    "mcu_color": {
+        "palette-label": "カラー",
+        "name": "名前",
+        "name-placeholder": "名前",
+        "sda-pin": "SDAピン",
+        "scl-pin": "SCLピン",
+        "output-mode": "出力モード",
+        "raw-values": "生の値 (0-65535)",
+        "rgb-values": "RGB値 (0-255)",
+        "calibration": "キャリブレーション",
+        "black-reference": "黒基準値:",
+        "white-reference": "白基準値:",
+        "red": "赤",
+        "green": "緑",
+        "blue": "青",
+        "calibration-tip": "<b>ヒント:</b> センサーを黒い表面に当ててRGB値を記録し、次に白い表面に当ててその値を記録してください。これによりRGBモードでの適切な色校正が可能になります。"
+    }
+}

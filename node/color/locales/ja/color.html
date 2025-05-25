@@ -1,0 +1,122 @@
+<script type="text/html" data-help-name="mcu_color">
+    <p>M5Stack Color Unit（TCS3472センサー）からI2C経由で設定可能な出力モードでカラー値を読み取るノードです。</p>
+    
+    <h3>出力</h3>
+    <p>出力は選択された出力モードによって変わります：</p>
+    
+    <h4>生の値モード</h4>
+    <dl class="message-properties">
+        <dt>出力1 - 赤</dt>
+        <dd>
+            <dl class="message-properties">
+                <dt>payload <span class="property-type">number</span></dt>
+                <dd>赤色成分の生データ値（0〜65535）</dd>
+            </dl>
+        </dd>
+        
+        <dt>出力2 - 緑</dt>
+        <dd>
+            <dl class="message-properties">
+                <dt>payload <span class="property-type">number</span></dt>
+                <dd>緑色成分の生データ値（0〜65535）</dd>
+            </dl>
+        </dd>
+        
+        <dt>出力3 - 青</dt>
+        <dd>
+            <dl class="message-properties">
+                <dt>payload <span class="property-type">number</span></dt>
+                <dd>青色成分の生データ値（0〜65535）</dd>
+            </dl>
+        </dd>
+        
+        <dt>出力4 - クリア</dt>
+        <dd>
+            <dl class="message-properties">
+                <dt>payload <span class="property-type">number</span></dt>
+                <dd>環境光測定用のクリアチャンネル生データ値（0〜65535）</dd>
+            </dl>
+        </dd>
+    </dl>
+    
+    <h4>RGB値モード</h4>
+    <dl class="message-properties">
+        <dt>出力1 - 赤（0-255）</dt>
+        <dd>
+            <dl class="message-properties">
+                <dt>payload <span class="property-type">number</span></dt>
+                <dd>校正済み赤色成分値（0〜255）</dd>
+            </dl>
+        </dd>
+        
+        <dt>出力2 - 緑（0-255）</dt>
+        <dd>
+            <dl class="message-properties">
+                <dt>payload <span class="property-type">number</span></dt>
+                <dd>校正済み緑色成分値（0〜255）</dd>
+            </dl>
+        </dd>
+        
+        <dt>出力3 - 青（0-255）</dt>
+        <dd>
+            <dl class="message-properties">
+                <dt>payload <span class="property-type">number</span></dt>
+                <dd>校正済み青色成分値（0〜255）</dd>
+            </dl>
+        </dd>
+        
+        <dt>出力4 - RGB文字列</dt>
+        <dd>
+            <dl class="message-properties">
+                <dt>payload <span class="property-type">string</span></dt>
+                <dd>CSS RGB文字列形式："rgb(r,g,b)" ダッシュボードで直接使用可能</dd>
+            </dl>
+        </dd>
+    </dl>
+    
+    <h3>設定</h3>
+    <dl class="message-properties">
+        <dt>SDAピン</dt>
+        <dd>I2Cデータピン（デフォルト: 21）</dd>
+        
+        <dt>SCLピン</dt>
+        <dd>I2Cクロックピン（デフォルト: 22）</dd>
+        
+        <dt>出力モード</dt>
+        <dd>「生の値」または「RGB値」出力モードから選択</dd>
+        
+        <dt>キャリブレーション（RGBモードのみ）</dt>
+        <dd>
+            <p>カラーキャリブレーション用の黒と白の基準値：</p>
+            <ul>
+                <li><strong>黒基準値：</strong> センサーを黒い表面に当てた時のRGB値</li>
+                <li><strong>白基準値：</strong> センサーを白い表面に当てた時のRGB値</li>
+            </ul>
+            <p>適切なキャリブレーションにより、RGBモードでの正確な色表現が可能になります。</p>
+        </dd>
+    </dl>
+    
+    <h3>詳細</h3>
+    <p>このノードは、I2C（アドレス0x29）経由でM5Stack Color UnitのTCS3472カラーセンサーと通信します。</p>
+    
+    <p><strong>生の値モード：</strong> 正規化や処理を行わずにセンサーから直接取得した16ビット値の生のRGBCカラー読み取り値を提供し、
+    精密なカラー測定データを必要とするアプリケーションに適しています。</p>
+    
+    <p><strong>RGB値モード：</strong> 黒と白の基準点を使用して0-255の範囲に正規化された校正済みRGB値を提供します。
+    このモードはダッシュボード表示や一般的なカラーアプリケーションに最適です。</p>
+    
+    <h3>キャリブレーション手順</h3>
+    <p>RGBモードでセンサーを校正するには：</p>
+    <ol>
+        <li>一時的にノードを生の値モードに設定</li>
+        <li>センサーを黒い表面に当ててRGB値を記録</li>
+        <li>センサーを白い表面に当ててRGB値を記録</li>
+        <li>RGB値モードに切り替えて、これらの値をキャリブレーションフィールドに入力</li>
+        <li>フローをデプロイしてキャリブレーションを適用</li>
+    </ol>
+</script>
+    
+    <p>センサーは最初に使用されるときに154msの積分時間と4倍ゲインで最適なカラー検出のために自動的に初期化されます。
+    カラー読み取りをトリガーするには、任意のメッセージを送信してください。生データ出力により、
+    アプリケーションでカスタム処理とキャリブレーションが可能です。</p>
+</script>

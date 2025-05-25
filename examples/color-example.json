@@ -1,0 +1,277 @@
+[
+    {
+        "id": "cd07e39962104a33",
+        "type": "mcu_color",
+        "z": "1e12262b73111e1c",
+        "name": "",
+        "sdaPin": 21,
+        "sclPin": 22,
+        "outputMode": "rgb",
+        "redBlack": "776",
+        "greenBlack": "1633",
+        "blueBlack": "1938",
+        "redWhite": "1217",
+        "greenWhite": "2281",
+        "blueWhite": "2559",
+        "moddable_manifest": {
+            "include": [
+                {
+                    "git": "https://github.com/404background/node-red-contrib-mcu-m5units.git"
+                }
+            ]
+        },
+        "_mcu": {
+            "mcu": true
+        },
+        "x": 670,
+        "y": 320,
+        "wires": [
+            [
+                "ccb3af35da616d6c",
+                "c1af074bf973c135"
+            ],
+            [
+                "3eab0720ef52287a",
+                "8f712acfba498310"
+            ],
+            [
+                "2c21279949fcd8da",
+                "1174d1b85bc5a749"
+            ],
+            [
+                "c681c7d609a15615",
+                "0c2270cc6e9875ea",
+                "1defc82bd67f78a5"
+            ]
+        ]
+    },
+    {
+        "id": "23c1b32e1af4defe",
+        "type": "inject",
+        "z": "1e12262b73111e1c",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "_mcu": {
+            "mcu": true
+        },
+        "x": 510,
+        "y": 320,
+        "wires": [
+            [
+                "cd07e39962104a33"
+            ]
+        ]
+    },
+    {
+        "id": "c681c7d609a15615",
+        "type": "debug",
+        "z": "1e12262b73111e1c",
+        "name": "debug 12",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "_mcu": {
+            "mcu": true
+        },
+        "x": 820,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "ccb3af35da616d6c",
+        "type": "debug",
+        "z": "1e12262b73111e1c",
+        "name": "debug 13",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "_mcu": {
+            "mcu": true
+        },
+        "x": 820,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "3eab0720ef52287a",
+        "type": "debug",
+        "z": "1e12262b73111e1c",
+        "name": "debug 14",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "_mcu": {
+            "mcu": true
+        },
+        "x": 820,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "2c21279949fcd8da",
+        "type": "debug",
+        "z": "1e12262b73111e1c",
+        "name": "debug 15",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "_mcu": {
+            "mcu": true
+        },
+        "x": 820,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "1defc82bd67f78a5",
+        "type": "ui_text",
+        "z": "1e12262b73111e1c",
+        "group": "d87420d5f837ea99",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Color",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "_mcu": {
+            "mcu": true
+        },
+        "x": 990,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "c1af074bf973c135",
+        "type": "ui_text",
+        "z": "1e12262b73111e1c",
+        "group": "d87420d5f837ea99",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "R",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "_mcu": {
+            "mcu": true
+        },
+        "x": 990,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "8f712acfba498310",
+        "type": "ui_text",
+        "z": "1e12262b73111e1c",
+        "group": "d87420d5f837ea99",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "G",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "_mcu": {
+            "mcu": true
+        },
+        "x": 990,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "1174d1b85bc5a749",
+        "type": "ui_text",
+        "z": "1e12262b73111e1c",
+        "group": "d87420d5f837ea99",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "B",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "_mcu": {
+            "mcu": true
+        },
+        "x": 990,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "d87420d5f837ea99",
+        "type": "ui_group",
+        "name": "Nodes",
+        "tab": "ee2e080e3acc8787",
+        "order": 1,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": "",
+        "_mcu": {
+            "mcu": false
+        }
+    },
+    {
+        "id": "ee2e080e3acc8787",
+        "type": "ui_tab",
+        "name": "MCU",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false,
+        "_mcu": {
+            "mcu": false
+        }
+    }
+]

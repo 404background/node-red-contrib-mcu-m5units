@@ -1,6 +1,7 @@
 {
     "modules": {
-        "mcu_joystick": "./node/joystick/mcu_joystick"
+        "mcu_joystick": "./node/joystick/mcu_joystick",
+        "mcu_color": "./node/color/mcu_color"
     },
-    "preload": "mcu_joystick"
+    "preload": ["mcu_joystick", "mcu_color"]
 }

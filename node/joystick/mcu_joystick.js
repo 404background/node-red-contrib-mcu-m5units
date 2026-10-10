@@ -1,101 +1,75 @@
 import { Node } from "nodered"
 
 const JOYSTICK_I2C_ADDRESS = 0x52;
-let i2cCache = null;
+const I2C_HZ = 100_000;
+
+/* Pin from the editor, or the board's default I2C pin when it is not a number */
+function pinOrDefault(value, fallback) {
+    if (value === undefined || value === null || value === "")
+        return fallback;
+    const pin = Number(value);
+    return Number.isInteger(pin) && pin >= 0 ? pin : fallback;
+}
 
 class JoystickNode extends Node {
     #buffer = new Uint8Array(3);
-    #probeBuffer = new ArrayBuffer(0);
+    #options = null;
     #i2c = null;
-    #i2cInstance = null;
-    
+
     onStart(config) {
         super.onStart(config);
-        
-        try {
-            this.#i2c = this.#initializeI2C();
-            if (!this.#i2c) {
-                this.status({fill: "red", shape: "dot", text: "no I2C support"});
-                this.send([{ payload: null }, null, null]);
-                return;
-            }
-            
-            this.status({fill: "green", shape: "dot", text: "ready"});
-            this.send([{ payload: null }, null, null]);
-        } catch (e) {
-            this.status({fill: "red", shape: "dot", text: "error"});
-            this.send([{ payload: null }, null, null]);
+
+        /*
+         * device.I2C.default describes the board's bus (io constructor, data
+         * and clock pins); it is not an open bus. The SDA / SCL pins set in
+         * the editor take precedence over its pins.
+         */
+        const bus = globalThis.device?.I2C?.default;
+        if (!bus?.io) {
+            this.status({ fill: "red", shape: "ring", text: "no I2C support" });
+            this.error("no I2C bus on this board");
+            return;
         }
+
+        this.#options = {
+            ...bus,
+            data: pinOrDefault(config.sdaPin, bus.data),
+            clock: pinOrDefault(config.sclPin, bus.clock),
+            address: JOYSTICK_I2C_ADDRESS,
+            hz: I2C_HZ
+        };
+        this.status({ fill: "green", shape: "dot", text: "ready" });
     }
-    
-    #initializeI2C() {
-        if (i2cCache) return i2cCache;
-        
-        try {
-            if (globalThis.device?.I2C?.default) {
-                i2cCache = globalThis.device.I2C.default;
-                return i2cCache;
-            }
-            return null;
-        } catch (e) {
-            console.error("I2C initialization error:", e);
-            return null;
-        }
-    }
-    
+
     onMessage(msg, done) {
-        try {
-            this.#readJoystick();
-        } catch (e) {
-            this.status({fill: "red", shape: "dot", text: "read error"});
-            this.send([{ payload: null }, null, null]);
+        if (!this.#options) {
+            done?.();
+            return;
         }
-          done?.();
-    }
-    
-    #readJoystick() {
-        if (!this.#i2c) return;
-        
+
         try {
-            if (!this.#i2cInstance) {
-                const i2cOptions = {
-                    data: Number(this.#i2c.data) ?? 21,
-                    clock: Number(this.#i2c.clock) ?? 22,
-                    address: JOYSTICK_I2C_ADDRESS,
-                    hz: 100000
-                };
-                this.#i2cInstance = new this.#i2c.io(i2cOptions);
-            }
-            
-            if (this.#i2cInstance.write(this.#probeBuffer)) {
-                this.status({fill: "red", shape: "dot", text: "device disconnected"});
-                this.send([{ payload: null }, null, null]);
-                return;
-            }
-            
-            this.#i2cInstance.read(this.#buffer);
-            
-            const [x, y, buttonPressed] = this.#buffer;
-            this.status({fill: "green", shape: "dot", text: `x:${x}, y:${y}, btn:${buttonPressed ? 'pressed' : 'released'}`});
-            
-            this.send([
-                { payload: x },
-                { payload: y },
-                { payload: buttonPressed }
-            ]);
+            this.#i2c ??= new this.#options.io(this.#options);
+            this.#i2c.read(this.#buffer);   // throws when the unit does not answer
         } catch (e) {
-            this.#i2cInstance?.close();
-            this.#i2cInstance = null;
-            
-            console.error(`Joystick read error: ${e.message}`);
-            throw e;
+            /* Closed so that the next message opens the bus again */
+            this.#i2c?.close();
+            this.#i2c = null;
+            this.status({ fill: "red", shape: "ring", text: "device disconnected" });
+            this.error(`Joystick read error: ${e.message}`, msg);
+            return;
         }
+
+        const [x, y, buttonPressed] = this.#buffer;
+        this.status({ fill: "green", shape: "dot", text: `x:${x}, y:${y}, btn:${buttonPressed ? "pressed" : "released"}` });
+
+        this.send([
+            { payload: x },
+            { payload: y },
+            { payload: buttonPressed }
+        ]);
+        done?.();
     }
-      onStop() {
-        this.#i2cInstance?.close();
-        this.#i2cInstance = null;
-    }
-    
+
     static type = "mcu_joystick"
     static {
         RED.nodes.registerType(this.type, this)

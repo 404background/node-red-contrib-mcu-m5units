@@ -1,4 +1,5 @@
 import { Node } from "nodered";
+import Timer from "timer";
 
 const COLOR_I2C_ADDRESS = 0x29;
 const COMMAND_BIT = 0x80;
@@ -6,9 +7,11 @@ const AUTO_INCREMENT = 0x20;
 const REG_ENABLE = 0x00;
 const REG_ATIME = 0x01;
 const REG_CONTROL = 0x0F;
+const REG_ID = 0x12;
 const REG_CDATAL = 0x14;
 const ENABLE_PON = 0x01;
 const ENABLE_AEN = 0x02;
+const POWER_ON_DELAY_MS = 3;    // datasheet: 2.4 ms after PON before AEN
 const DEFAULT_INTEGRATION_MS = 154;
 const DEFAULT_GAIN = "16x";
 const GAIN_REGISTER = {
@@ -18,16 +21,25 @@ const GAIN_REGISTER = {
     "60x": 0x03
 };
 
-let i2cCache = null;
+/*
+ * Status texts are locale keys: node-red-mcu-plugin relays the status to the
+ * editor, which translates it in the node's namespace.
+ */
+const STATUS = {
+    ready: "mcu_color.status.ready",
+    noI2C: "mcu_color.status.no-i2c-support",
+    initFailed: "mcu_color.status.sensor-init-failed",
+    readError: "mcu_color.status.read-error"
+};
 
 class ColorNode extends Node {
-    #i2c = null;
+    #bus = null;
     #integrationMs = DEFAULT_INTEGRATION_MS;
     #gain = DEFAULT_GAIN;
-    #inputListener = null;
     #outputs = null;
     #singleOutput = null;
     #address = COLOR_I2C_ADDRESS;
+    #buffer = new Uint8Array(8);
 
     onStart(config) {
         super.onStart(config);
@@ -36,122 +48,72 @@ class ColorNode extends Node {
         this.#address = this.#parseAddress(config.i2cAddress);
         this.#configureOutputs(config);
 
-        this.#i2c = this.#initializeI2C();
-        if (!this.#i2c) {
-            this.send([{ payload: null, _status: { error: "no-i2c-support" } }]);
+        /*
+         * device.I2C.default describes the bus (io constructor, data and
+         * clock pins); it is not an open bus. The sensor is reached through an
+         * SMBus opened on those pins.
+         */
+        const SMBus = globalThis.device?.io?.SMBus;
+        const pins = globalThis.device?.I2C?.default;
+        if (!SMBus || !pins) {
+            this.status({ fill: "red", shape: "ring", text: STATUS.noI2C });
+            this.error("no I2C bus on this board");
             return;
-        }
-
-        if (!this.#enableSensor()) {
-            this.send([{ payload: null, _status: { error: "sensor-init-failed" } }]);
-            return;
-        }
-
-        if (typeof this.on === "function") {
-            this.#inputListener = msg => this.#handleInput(msg);
-            this.on("input", this.#inputListener);
-        }
-
-        this.send([{ payload: null, _status: { initialized: true } }]);
-    }
-
-    onStop() {
-        if (this.#inputListener) {
-            if (typeof this.off === "function") {
-                this.off("input", this.#inputListener);
-            } else if (typeof this.removeListener === "function") {
-                this.removeListener("input", this.#inputListener);
-            }
-            this.#inputListener = null;
-        }
-        this.#disableSensor();
-    }
-
-    onMessage(msg) {
-        this.#handleInput(msg);
-    }
-
-    #handleInput(msg) {
-        void msg;
-        if (!this.#i2c) {
-            this.send([{ payload: null, _status: { error: "no-i2c-support" } }]);
-            return;
-        }
-
-        const reading = this.#readColor();
-        if (!reading) {
-            this.send([{ payload: null, _status: { error: "read-error" } }]);
-            return;
-        }
-
-        const values = this.#buildValueMap(reading);
-        const payload = this.#composePayload(values);
-
-        const status = {
-            last: {
-                r: this.#shortenValue(reading.red),
-                g: this.#shortenValue(reading.green),
-                b: this.#shortenValue(reading.blue)
-            }
-        };
-
-        this.send([{ payload, _status: status }]);
-    }
-
-    #initializeI2C() {
-        if (i2cCache) {
-            return i2cCache;
         }
 
         try {
-            if (typeof device === "undefined") {
-                return null;
-            }
-            if (device.I2C?.default) {
-                i2cCache = device.I2C.default;
-            } else if (typeof device.i2c === "object") {
-                i2cCache = device.i2c;
-            }
-        } catch (error) {
-            void error;
-            i2cCache = null;
+            this.#bus = new SMBus({ ...pins, address: this.#address });
+            this.#enableSensor();
+        } catch (e) {
+            this.#bus?.close();
+            this.#bus = null;
+            this.status({ fill: "red", shape: "ring", text: STATUS.initFailed });
+            this.error(`Color unit not found at 0x${this.#address.toString(16)}: ${e.message}`);
+            return;
         }
 
-        return i2cCache;
+        this.status({ fill: "green", shape: "dot", text: STATUS.ready });
     }
 
+    onMessage(msg, done) {
+        if (!this.#bus) {
+            done?.();
+            return;
+        }
+
+        let reading;
+        try {
+            reading = this.#readColor();
+        } catch (e) {
+            this.status({ fill: "red", shape: "ring", text: STATUS.readError });
+            this.error(e.message, msg);
+            return;
+        }
+
+        msg.payload = this.#composePayload(this.#buildValueMap(reading));
+        this.status({
+            fill: "green",
+            shape: "dot",
+            text: `r:${this.#shortenValue(reading.red)} g:${this.#shortenValue(reading.green)} b:${this.#shortenValue(reading.blue)}`
+        });
+        this.send(msg);
+        done?.();
+    }
+
+    /* Throws when the sensor does not answer (NACK) */
     #enableSensor() {
-        const atime = this.#integrationToRegister(this.#integrationMs);
-        const gainValue = GAIN_REGISTER[this.#gain] ?? GAIN_REGISTER[DEFAULT_GAIN];
-
-        if (!this.#writeRegister(REG_ENABLE, ENABLE_PON)) {
-            return false;
-        }
-
-        if (!this.#writeRegister(REG_ENABLE, ENABLE_PON | ENABLE_AEN)) {
-            return false;
-        }
-
-        if (!this.#writeRegister(REG_ATIME, atime)) {
-            return false;
-        }
-
-        if (!this.#writeRegister(REG_CONTROL, gainValue)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    #disableSensor() {
-        this.#writeRegister(REG_ENABLE, 0x00);
+        const bus = this.#bus;
+        bus.readUint8(COMMAND_BIT | REG_ID);
+        bus.writeUint8(COMMAND_BIT | REG_ATIME, this.#integrationToRegister(this.#integrationMs));
+        bus.writeUint8(COMMAND_BIT | REG_CONTROL, GAIN_REGISTER[this.#gain] ?? GAIN_REGISTER[DEFAULT_GAIN]);
+        bus.writeUint8(COMMAND_BIT | REG_ENABLE, ENABLE_PON);
+        Timer.delay(POWER_ON_DELAY_MS);
+        bus.writeUint8(COMMAND_BIT | REG_ENABLE, ENABLE_PON | ENABLE_AEN);
     }
 
     #readColor() {
-        const bytes = this.#readRegisters(REG_CDATAL, 8);
-        if (!bytes || bytes.length < 8) {
-            return null;
-        }
+        const bytes = this.#buffer;
+        this.#bus.readBuffer(COMMAND_BIT | AUTO_INCREMENT | REG_CDATAL, bytes);
 
         const clear = (bytes[1] << 8) | bytes[0];
         const red = (bytes[3] << 8) | bytes[2];
@@ -162,81 +124,6 @@ class ColorNode extends Node {
         const colorTemperature = this.#calculateColorTemperature(red, green, blue);
 
         return { clear, red, green, blue, lux, colorTemperature };
-    }
-
-    #writeRegister(register, value) {
-        if (!this.#i2c) {
-            return false;
-        }
-
-        const reg = COMMAND_BIT | register;
-
-        try {
-            const address = this.#address;
-
-            if (typeof this.#i2c.writeByte === "function") {
-                this.#i2c.writeByte(address, reg, value);
-                return true;
-            }
-
-            if (typeof this.#i2c.writeBytes === "function") {
-                this.#i2c.writeBytes(address, reg, [value]);
-                return true;
-            }
-
-            if (typeof this.#i2c.write === "function") {
-                this.#i2c.write(address, [reg, value]);
-                return true;
-            }
-        } catch (error) {
-            void error;
-        }
-
-        return false;
-    }
-
-    #readRegisters(register, length) {
-        if (!this.#i2c) {
-            return null;
-        }
-
-        const reg = COMMAND_BIT | AUTO_INCREMENT | register;
-
-        try {
-            const address = this.#address;
-
-            if (typeof this.#i2c.readBytes === "function") {
-                return this.#normalizeBytes(this.#i2c.readBytes(address, reg, length));
-            }
-
-            if (typeof this.#i2c.read === "function") {
-                return this.#normalizeBytes(this.#i2c.read(address, reg, length));
-            }
-        } catch (error) {
-            void error;
-        }
-
-        return null;
-    }
-
-    #normalizeBytes(value) {
-        if (!value) {
-            return null;
-        }
-
-        if (Array.isArray(value)) {
-            return value;
-        }
-
-        if (value instanceof Uint8Array) {
-            return Array.from(value);
-        }
-
-        if (value.buffer instanceof ArrayBuffer) {
-            return Array.from(new Uint8Array(value.buffer));
-        }
-
-        return null;
     }
 
     #integrationToRegister(ms) {

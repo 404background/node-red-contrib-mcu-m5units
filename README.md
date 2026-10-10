@@ -53,7 +53,8 @@ node-red-contrib-mcu-m5units/
 ├── package.json             # Package settings  
 ├── node/                    # Node implementation directory  
 │   ├── <unit-name>/         # Each M5Stack unit has its own folder  
-│   │   ├── <unit-name>.js   # Runtime implementation  
+│   │   ├── <unit-name>.js   # Editor-side registration (runs in Node-RED)  
+│   │   ├── mcu_<unit-name>.js # MCU runtime (runs on the device)  
 │   │   ├── <unit-name>.html # Editor UI definition  
 │   │   └── locales/         # i18n dictionaries  
 │   └── index.js             # Entry point for registering all nodes  

@@ -1,0 +1,32 @@
+{
+    "mcu_color": {
+        "palette-label": "カラー",
+        "name": "名前",
+        "name-placeholder": "名前",
+        "integration": "積分時間 (ms)",
+    "address": "I2Cアドレス",
+        "gain": "ゲイン",
+        "outputs": "出力項目",
+        "channels": {
+            "red": "赤 (生値)",
+            "green": "緑 (生値)",
+            "blue": "青 (生値)",
+            "clear": "クリア (生値)",
+            "colorTemperature": "色温度 (K)",
+            "lux": "照度 (lx)"
+        },
+        "tips": {
+            "single-output": "ヒント: チェックが1つだけの場合、msg.payloadにはオブジェクトではなくその値が直接設定されます。"
+        },
+        "status": {
+            "waiting": "待機中",
+            "ready": "準備完了",
+            "requesting": "リクエスト中...",
+            "reading": "読み取り中...",
+            "error": "エラー",
+            "no-i2c-support": "I2Cサポートなし",
+            "sensor-init-failed": "センサー初期化失敗",
+            "read-error": "読み取りエラー"
+        }
+    }
+}

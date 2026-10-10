@@ -1,0 +1,92 @@
+<script type="text/javascript" data-help-style="node-red-node-description">
+    RED.nodes.registerType('mcu_color', {
+        category: 'M5Stack Units',
+        color: '#a6bbcf',
+        defaults: {
+            name: { value: "" },
+            integrationTime: { value: 154, required: true, validate: RED.validators.number() },
+            i2cAddress: { value: "0x29" },
+            gain: { value: "16x", required: true },
+            includeRed: { value: true },
+            includeGreen: { value: true },
+            includeBlue: { value: true },
+            includeClear: { value: true },
+            includeCct: { value: true },
+            includeLux: { value: true },
+            moddable_manifest: {
+                value: {
+                    include: [
+                        {
+                            "git": "https://github.com/404background/node-red-contrib-mcu-m5units.git"
+                        }
+                    ]
+                }
+            }
+        },
+        inputs: 1,
+        outputs: 1,
+        outputLabels: ["Reading"],
+        icon: 'font-awesome/fa-tint',
+        label: function() {
+            return this.name || 'Color';
+        },
+        labelStyle: function() {
+            return this.name ? 'node_label_italic' : '';
+        },
+        paletteLabel: function() {
+            return this._('mcu_color.palette-label');
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="mcu_color">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="mcu_color.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]mcu_color.name-placeholder">
+    </div>
+    <div class="form-row">
+        <label for="node-input-integrationTime"><i class="fa fa-clock-o"></i> <span data-i18n="mcu_color.integration"></span></label>
+        <input type="number" id="node-input-integrationTime" min="2" max="700" step="1">
+    </div>
+    <div class="form-row">
+        <label for="node-input-i2cAddress"><i class="fa fa-plug"></i> <span data-i18n="mcu_color.address"></span></label>
+        <input type="text" id="node-input-i2cAddress" placeholder="0x29">
+    </div>
+    <div class="form-row">
+        <label for="node-input-gain"><i class="fa fa-sliders"></i> <span data-i18n="mcu_color.gain"></span></label>
+        <select id="node-input-gain">
+            <option value="1x">1x</option>
+            <option value="4x">4x</option>
+            <option value="16x">16x</option>
+            <option value="60x">60x</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label><i class="fa fa-check-square-o"></i> <span data-i18n="mcu_color.outputs"></span></label>
+    </div>
+    <div class="form-row">
+        <div class="mcu-color-output-options">
+            <label><input type="checkbox" id="node-input-includeRed"> <span data-i18n="mcu_color.channels.red"></span></label>
+            <label><input type="checkbox" id="node-input-includeGreen"> <span data-i18n="mcu_color.channels.green"></span></label>
+            <label><input type="checkbox" id="node-input-includeBlue"> <span data-i18n="mcu_color.channels.blue"></span></label>
+            <label><input type="checkbox" id="node-input-includeClear"> <span data-i18n="mcu_color.channels.clear"></span></label>
+            <label><input type="checkbox" id="node-input-includeCct"> <span data-i18n="mcu_color.channels.colorTemperature"></span></label>
+            <label><input type="checkbox" id="node-input-includeLux"> <span data-i18n="mcu_color.channels.lux"></span></label>
+        </div>
+    </div>
+    <div class="form-tips" data-i18n="mcu_color.tips.single-output"></div>
+</script>
+
+<style>
+    .mcu-color-output-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 16px;
+        margin-left: 140px;
+    }
+    .mcu-color-output-options label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+</style>

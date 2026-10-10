@@ -1,0 +1,44 @@
+<script type="text/html" data-help-name="mcu_color">
+    <p>A node that queries the M5Stack Color Unit (TCS3472) and returns the RGB+Clear values on demand.</p>
+
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>any</dt>
+        <dd>Any message triggers a new reading from the sensor.</dd>
+    </dl>
+
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd>
+            <dl class="message-properties">
+                <dt>red <span class="property-type">number</span></dt>
+                <dd>Raw red channel value (0-65535).</dd>
+                <dt>green <span class="property-type">number</span></dt>
+                <dd>Raw green channel value (0-65535).</dd>
+                <dt>blue <span class="property-type">number</span></dt>
+                <dd>Raw blue channel value (0-65535).</dd>
+                <dt>clear <span class="property-type">number</span></dt>
+                <dd>Raw clear channel value (0-65535).</dd>
+                <dt>colorTemperature <span class="property-type">number</span></dt>
+                <dd>Approximate correlated color temperature in Kelvin.</dd>
+                <dt>lux <span class="property-type">number</span></dt>
+                <dd>Approximate illuminance in lux.</dd>
+            </dl>
+        </dd>
+    </dl>
+
+    <h3>Details</h3>
+    <p>The node enables the TCS3472 sensor, applies the configured integration time and gain, and reads all color channels when a message arrives.</p>
+    <p>A status indicator shows the request lifecycle and the last measured RGB values.</p>
+
+    <h3>Configuration</h3>
+    <ul>
+        <li><code>I2C Address</code>: Override the sensor address when not using the default <code>0x29</code>.</li>
+        <li><code>Integration Time</code>: Sampling duration in milliseconds (2-700ms).</li>
+        <li><code>Gain</code>: Sensor gain multiplier (1x, 4x, 16x, 60x).</li>
+        <li><code>Outputs</code>: Select which sensor values to include in <code>msg.payload</code>.</li>
+    </ul>
+
+    <p><strong>Tip:</strong> When exactly one output is enabled, that value is emitted directly as <code>msg.payload</code>. With multiple outputs selected, the node emits an object containing the chosen fields.</p>
+</script>

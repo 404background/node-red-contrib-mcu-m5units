@@ -1,0 +1,44 @@
+<script type="text/html" data-help-name="mcu_color">
+    <p>M5Stack Color Unit (TCS3472) のRGB+Clear値を必要に応じて取得するノードです。</p>
+
+    <h3>入力</h3>
+    <dl class="message-properties">
+        <dt>任意</dt>
+        <dd>任意のメッセージでセンサー読み取りをトリガーします。</dd>
+    </dl>
+
+    <h3>出力</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd>
+            <dl class="message-properties">
+                <dt>red <span class="property-type">number</span></dt>
+                <dd>赤チャネルの生値 (0-65535)。</dd>
+                <dt>green <span class="property-type">number</span></dt>
+                <dd>緑チャネルの生値 (0-65535)。</dd>
+                <dt>blue <span class="property-type">number</span></dt>
+                <dd>青チャネルの生値 (0-65535)。</dd>
+                <dt>clear <span class="property-type">number</span></dt>
+                <dd>クリアチャネルの生値 (0-65535)。</dd>
+                <dt>colorTemperature <span class="property-type">number</span></dt>
+                <dd>相関色温度のおおよその値 (ケルビン)。</dd>
+                <dt>lux <span class="property-type">number</span></dt>
+                <dd>照度のおおよその値 (ルクス)。</dd>
+            </dl>
+        </dd>
+    </dl>
+
+    <h3>詳細</h3>
+    <p>ノードはTCS3472センサーを有効化し、設定された積分時間とゲインを適用した後、入力メッセージ受信時に各チャネルを読み取ります。</p>
+    <p>ステータスインジケーターには処理の進行状況と直近のRGB値が表示されます。</p>
+
+    <h3>設定</h3>
+    <ul>
+        <li><code>I2Cアドレス</code>: 既定の <code>0x29</code> 以外を使用する場合に設定します。</li>
+        <li><code>積分時間</code>: サンプリング時間 (2-700ms)。</li>
+        <li><code>ゲイン</code>: センサーのゲイン倍率 (1x, 4x, 16x, 60x)。</li>
+        <li><code>出力項目</code>: <code>msg.payload</code> に含めるセンサー値を選択します。</li>
+    </ul>
+
+    <p><strong>ヒント:</strong> 有効な項目が1つだけの場合は、その値がオブジェクトではなく <code>msg.payload</code> に直接出力されます。複数を選択すると、選択した値をまとめたオブジェクトが出力されます。</p>
+</script>

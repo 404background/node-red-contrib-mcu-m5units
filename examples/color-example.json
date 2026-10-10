@@ -1,0 +1,73 @@
+[
+    {
+        "id": "color-example",
+        "type": "tab",
+        "label": "M5Stack Color Example",
+        "disabled": false,
+    "info": "Example flow demonstrating the on-demand Color Unit node"
+    },
+    {
+        "id": "color-inject",
+        "type": "inject",
+        "z": "color-example",
+        "name": "Read Color",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "str",
+        "x": 160,
+        "y": 120,
+        "wires": [
+            [
+                "color-node"
+            ]
+        ]
+    },
+    {
+        "id": "color-node",
+        "type": "mcu_color",
+        "z": "color-example",
+        "name": "M5 Color",
+        "integrationTime": "154",
+    "gain": "16x",
+    "i2cAddress": "0x29",
+    "includeRed": true,
+    "includeGreen": true,
+    "includeBlue": true,
+    "includeClear": true,
+    "includeCct": true,
+    "includeLux": true,
+        "x": 360,
+        "y": 120,
+        "wires": [
+            [
+                "color-debug"
+            ]
+        ]
+    },
+    {
+        "id": "color-debug",
+        "type": "debug",
+        "z": "color-example",
+        "name": "Color Reading",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 120,
+        "wires": []
+    }
+]

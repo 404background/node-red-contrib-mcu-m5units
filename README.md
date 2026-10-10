@@ -22,10 +22,12 @@ Or install directly from the Node-RED palette manager.
 - Support for various M5Stack sensors and modules
 - Easy-to-use node interface
 - Full localization support
+- Flexible payload selection for MCU sensor nodes
 
 ## Supported Units
 
 - Joystick - Read analog joystick input (X, Y axes and button press)
+- Color - Capture RGB, clear, color temperature, and lux readings on demand with selectable outputs
 
 ## Usage
 
@@ -37,6 +39,9 @@ Or install directly from the Node-RED palette manager.
 ## Examples
 
 Example flows are provided in the `examples/` directory.
+
+- `joystick-example.json`
+- `color-example.json`
 
 ## Project Structure
 

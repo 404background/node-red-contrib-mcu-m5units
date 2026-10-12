@@ -2,9 +2,12 @@
     {
         "id": "color-example",
         "type": "tab",
-        "label": "M5Stack Color Example",
+        "label": "M5Stack Color unit",
         "disabled": false,
-    "info": "Example flow demonstrating the on-demand Color Unit node"
+        "info": "M5Stack Color unit (TCS34725) on the board's default I2C pins.\nPress the inject button to read the color.",
+        "_mcu": {
+            "mcu": true
+        }
     },
     {
         "id": "color-inject",
@@ -29,7 +32,10 @@
             [
                 "color-node"
             ]
-        ]
+        ],
+        "_mcu": {
+            "mcu": true
+        }
     },
     {
         "id": "color-node",
@@ -37,21 +43,24 @@
         "z": "color-example",
         "name": "M5 Color",
         "integrationTime": "154",
-    "gain": "16x",
-    "i2cAddress": "0x29",
-    "includeRed": true,
-    "includeGreen": true,
-    "includeBlue": true,
-    "includeClear": true,
-    "includeCct": true,
-    "includeLux": true,
+        "gain": "16x",
+        "i2cAddress": "0x29",
+        "includeRed": true,
+        "includeGreen": true,
+        "includeBlue": true,
+        "includeClear": true,
+        "includeCct": true,
+        "includeLux": true,
         "x": 360,
         "y": 120,
         "wires": [
             [
                 "color-debug"
             ]
-        ]
+        ],
+        "_mcu": {
+            "mcu": true
+        }
     },
     {
         "id": "color-debug",
@@ -68,6 +77,9 @@
         "statusType": "auto",
         "x": 560,
         "y": 120,
-        "wires": []
+        "wires": [],
+        "_mcu": {
+            "mcu": true
+        }
     }
 ]

@@ -1,5 +1,15 @@
 [
     {
+        "id": "cb5954c42a51cd53",
+        "type": "tab",
+        "label": "M5Stack Joystick unit",
+        "disabled": false,
+        "info": "M5Stack Joystick unit on Port A (SDA 21, SCL 22 on M5Stack Basic / Fire).\nThe joystick is read every second: X, Y and the button go to the three outputs.",
+        "_mcu": {
+            "mcu": true
+        }
+    },
+    {
         "id": "c90d91941b596586",
         "type": "debug",
         "z": "cb5954c42a51cd53",
@@ -66,13 +76,6 @@
         "name": "",
         "sdaPin": "21",
         "sclPin": "22",
-        "moddable_manifest": {
-            "include": [
-                {
-                    "git": "https://github.com/404background/node-red-contrib-mcu-m5units.git"
-                }
-            ]
-        },
         "_mcu": {
             "mcu": true
         },
